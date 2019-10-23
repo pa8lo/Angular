@@ -9,6 +9,7 @@ body {
   
 }
 
+
 .container {
   margin: 20px;
   display: flex;
@@ -27,6 +28,7 @@ $primary-text-color:   #212121;
 $secondary-text-color: #757575;
 $divider-color:        #BDBDBD;
 
+
 @mixin zero-margin($pad-up-down, $pad-left-right) {
     margin: 0px auto;
     padding: $pad-up-down $pad-left-right;
@@ -43,4 +45,10 @@ $divider-color:        #BDBDBD;
 
 .flex-spacer {
   flex: 1 1 auto;
+}
+.highlight {
+  background-color: $background-pale;
+  border: 1px solid $primary-color-dark;
+  z-index: 1;
+  transform: scale(1.01);
 }
