@@ -1,24 +1,40 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { flyInOut } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
 @Component({
   selector: 'app-contact',
   templateUrl: './contact.component.html',
-  styleUrls: ['./contact.component.scss']
+  styleUrls: ['./contact.component.scss'],
+  host: {
+    '[@flyInOut]': 'true',
+    'style': 'display: block;'
+    },
+    animations: [
+      flyInOut(),
+    ]
 })
 export class ContactComponent implements OnInit {
 
   @ViewChild('fform') feedbackFormDirective;
 
   feedbackForm: FormGroup;
+  showfeedback: boolean;
+  loading : boolean;
   feedback: Feedback;
+  feedbacks: Feedback[];
+  errMess: string;
   contactType = ContactType;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private feedbackService: FeedbackService,) {
     this.createForm();
   }
 
   ngOnInit() {
+    this.feedbackService.getFeedbacks()
+    .subscribe(feedbacks => this.feedbacks = feedbacks,
+      errmess => this.errMess = <any>errmess);
   }
 
   formErrors = {
@@ -88,6 +104,9 @@ export class ContactComponent implements OnInit {
 
   onSubmit() {
     this.feedback = this.feedbackForm.value;
+    this.feedbackService.submitFeedback(this.feedback)
+    .subscribe(feedback => { this.feedback = feedback},
+      errmess => {this.feedback = null;this.errMess = <any>errmess})
     console.log(this.feedback);
     this.feedbackForm.reset({
       firstname: '',
@@ -99,6 +118,18 @@ export class ContactComponent implements OnInit {
       message: ''
     });
     this.feedbackFormDirective.resetForm();
+    this.loading = true
+    setTimeout(() => {
+      this.loading = false
+      this.presentFeedback()
+    }, 2000);
+
+  }
+  presentFeedback(){
+    this.showfeedback=true;
+    setTimeout(() => {
+      this.showfeedback = false;
+    }, 5000);
   }
 
 }
